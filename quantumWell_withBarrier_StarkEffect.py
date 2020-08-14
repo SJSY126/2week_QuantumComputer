@@ -28,7 +28,10 @@ def phi(n, x, t):
 
 
 def V(x, Ex):
-    return (e * Ex * x)
+    if (abs(x) <= W / 2):
+        return (e * Ex * x) + V_max
+    else:
+        return (e * Ex * x)
 
 
 def integral_matrixElement(x, n1, n2, Ex):
@@ -56,17 +59,18 @@ I = 0+1j
 L = 10 ** -9
 x_min = -L / 2
 x_max = L / 2
-n_max = 10
-NEx = 10
-Ex_max = 1e10
-Ex_min = 0
+n_max = 30
+DIM = n_max + 1
 
 NX = 500
 dx = 10 ** -9
-ts = -50
-te = 50
 
-DIM = n_max + 1
+W = L / 5
+V_max = 30.0 * eV
+
+NEx = 10
+Ex_max = 1e8
+N = 2
 
 eigenvalues = [0] * (NEx + 1)
 vectors = [0] * (NEx + 1)
@@ -81,7 +85,7 @@ for nEx in range(NEx + 1):
     for n in range(len(phi[nEx])):
         phi[nEx][n] = [0] * (NX + 1)
 
-averageX = [0] * 2
+averageX = [0] * N
 for n in range(len(averageX)):
     averageX[n] = [0] * (NEx + 1)
 
@@ -127,7 +131,7 @@ for nEx in range(NEx + 1):
         for j in range(DIM):
             sum += abs(v[j]) ** 2
 
-    #print("MA-EA: " + str(sum))
+    print("MA-EA: " + str(sum))
 
     for nx in range(NX+1):
         x = x_min + (x_max - x_min) * nx / NX
@@ -158,6 +162,7 @@ En_1 = []
 for nEx in range(NEx + 1):
     En_0.append(eigenvalues[nEx][0])
     En_1.append(eigenvalues[nEx][1])
+    print(str(nEx) + ' '+str(eigenvalues[nEx][0])+' '+str(eigenvalues[nEx][1]))
 
 plt.plot(exs, En_0, marker='o', linewidth=3)
 plt.plot(exs, En_1, marker='o', linewidth=3)
@@ -167,7 +172,7 @@ plt.title('Existence probability at Position(n=0)')
 plt.xlabel("Position(nm)")
 plt.ylabel('|phi|^2')
 plt.xlim([-0.5, 0.5])
-plt.ylim([0, 4.])
+plt.ylim([0, 5.])
 for nEx in range(NEx + 1):
     plt.plot(xs, phi[nEx][0], linewidth=3)
 
@@ -176,7 +181,7 @@ plt.title('Existence probability at Position(n=1)')
 plt.xlabel('Position(nm)')
 plt.ylabel('|phi|^2')
 plt.xlim([-0.5, 0.5])
-plt.ylim([0, 3.])
+plt.ylim([0, 5.])
 for nEx in range(NEx + 1):
     plt.plot(xs, phi[nEx][1], linewidth=3)
 
